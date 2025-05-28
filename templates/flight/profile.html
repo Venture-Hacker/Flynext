@@ -1,0 +1,124 @@
+{% extends 'flight/userbase.html' %}
+{% block content %}
+{% load static %}
+
+<style>
+    .form--control:disabled {
+        background-color: #f0f0f0; /* Light grey background */
+        color: #a0a0a0; /* Grey text color */
+        border-color: #d0d0d0; /* Grey border color */
+    }
+    .btn--base:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    }
+    .error-message {
+        color: red;
+        font-size: 0.875em;
+    }
+</style>
+
+<div class="relative-container" style="position: relative; padding: 20px; min-height: calc(100vh - 100px);">
+    <!-- Background Image Positioned Behind Content -->
+    <div class="background-image" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden;">
+        <img src="{% static 'assets/images/element/element-1.png' %}" alt="element" style="width: 100%; height: auto; object-fit: cover;">
+    </div>
+
+    <h1 class="ptb-10" style="font-family: 'TimesnewRoman'; font-size: 48px; color: #4a4a4a; text-align: left; font-weight: 400; margin-left: 20px;">
+        Update your Profile
+    </h1>
+
+    <div class="row justify-content-center">
+        <div class="col-xl-5 col-lg-6">
+            <div class="account-form-area" data-aos="fade-up" data-aos-duration="1200" style="position: relative; padding: 20px; background: rgba(255, 255, 255, 0.8); border-radius: 8px;">
+                {% if is_google_user %}
+                    <p>Your profile is managed by Google and cannot be updated here.</p>
+                {% else %}
+                <form method="post" action="{% url 'profile' %}" class="account-form" id="profile-form">
+                    {% csrf_token %}
+                    <div class="row mb-10-none">
+                        <div class="col-xl-12 form-group">
+                            <label class="icon"><i class="icon-name_icone"></i></label>
+                            <input type="text" class="form--control" id="username" name="username" placeholder="Username"
+                                required value="{{ user.username }}" disabled>
+                            <span id="username-error" class="error-message"></span>
+                        </div>
+                        <div class="col-xl-12 form-group">
+                            <label class="icon"><i class="las la-envelope"></i></label>
+                            <input type="email" class="form--control" id="email" name="email" placeholder="Email"
+                                required value="{{ user.email }}" disabled>
+                            <span id="email-error" class="error-message"></span>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 form-group">
+                            <label class="icon"><i class="icon-name_icone"></i></label>
+                            <input type="text" class="form--control" id="fname" name="fname" placeholder="First Name"
+                                required value="{{ user.first_name }}" disabled>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 form-group">
+                            <label class="icon"><i class="icon-name_icone"></i></label>
+                            <input type="text" class="form--control" id="lname" name="lname" placeholder="Last Name"
+                                required value="{{ user.last_name }}" disabled>
+                        </div>
+                        <div class="col-xl-12 form-group">
+                            <label class="icon"><i class="icon-Create_Password_icone"></i></label>
+                            <input type="password" class="form--control" id="password" name="password"
+                                placeholder="Password">
+                        </div>
+                        <div class="col-lg-12 form-group text-center">
+                            <button type="button" id="edit-button" class="btn--base w-100">Edit</button>
+                            <button type="submit" id="save-button" class="btn--base w-100" style="display: none;">Save</button>
+                        </div>
+                    </div>
+                </form>                
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const editButton = document.getElementById('edit-button');
+        const saveButton = document.getElementById('save-button');
+        const usernameInput = document.getElementById('username');
+        const emailInput = document.getElementById('email');
+        const usernameError = document.getElementById('username-error');
+        const emailError = document.getElementById('email-error');
+        const form = document.getElementById('profile-form');
+    
+        let isEditing = false; // Track whether the user is in edit mode
+    
+        editButton.addEventListener('click', function() {
+            document.querySelectorAll('input[type="text"], input[type="email"], input[type="password"]').forEach(field => field.disabled = false);
+            editButton.style.display = 'none';
+            saveButton.style.display = 'block';
+            saveButton.disabled = false; // Enable save button initially
+            isEditing = true; // Set editing mode to true
+        });
+    
+        const checkField = async (field, errorElement, url) => {
+            const response = await fetch(url + '?value=' + encodeURIComponent(field.value));
+            const data = await response.json();
+            if (data.exists) {
+                errorElement.textContent = `The ${field.name} is already taken.`;
+                saveButton.disabled = true; // Disable save button
+            } else {
+                errorElement.textContent = '';
+                saveButton.disabled = false; // Enable save button
+            }
+        };
+    
+        usernameInput.addEventListener('blur', function() {
+            if (isEditing) {
+                checkField(usernameInput, usernameError, '{% url "check_username" %}');
+            }
+        });
+    
+        emailInput.addEventListener('blur', function() {
+            if (isEditing) {
+                checkField(emailInput, emailError, '{% url "check_email" %}');
+            }
+        });
+    });
+    </script>
+    
+{% endblock %}
