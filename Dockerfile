@@ -32,4 +32,4 @@ COPY . .
 RUN python manage.py collectstatic --noinput
 
 # Run server
-CMD gunicorn flynext.wsgi:application --bind 0.0.0.0:$PORT
+CMD ["sh", "-c", "gunicorn flynext.wsgi:application --bind 0.0.0.0:${PORT:-8080}"]
