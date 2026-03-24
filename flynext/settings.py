@@ -105,7 +105,7 @@ WSGI_APPLICATION = 'flynext.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.parse(
-        config('DATABASE_URL'),
+        config('DATABASE_URL', default='sqlite:///db.sqlite3'),
         conn_max_age=600,
         ssl_require=True
     )

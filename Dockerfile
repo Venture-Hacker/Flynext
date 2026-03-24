@@ -28,8 +28,7 @@ RUN pip install -r requirements.txt
 # Copy project
 COPY . .
 
-# Collect static files
-RUN python manage.py collectstatic --noinput
+
 
 # Run server
-CMD ["sh", "-c", "gunicorn flynext.wsgi:application --bind 0.0.0.0:${PORT:-8080}"]
+CMD ["sh", "-c", "python manage.py collectstatic --noinput && gunicorn flynext.wsgi:application --bind 0.0.0.0:${PORT:-8080}"]
