@@ -36,6 +36,7 @@ CSRF_TRUSTED_ORIGINS = [
 
 # Application definition
 SITE_ID=2
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
