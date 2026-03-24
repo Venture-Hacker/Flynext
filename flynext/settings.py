@@ -26,10 +26,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-kgcmb1!ld8n77lt=07b09!dake&4)do%7ad3gksbwij%8im76k'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://flynext.up.railway.app"
+]
 
 # Application definition
 SITE_ID=2
